@@ -1,46 +1,182 @@
+:root {
+    --primary-color: #6a0dad;
+    --secondary-color: #9b59b6;
+    --light-purple: #d8bfd8;
+    --white: #ffffff;
+    --black: #333333;
+    --gray: #e0e0e0;
+    --dark-purple: #4b0082;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f8f0ff;
-  margin: 0;
-  padding: 20px;
-  text-align: center;
+    background-color: #f9f4fb;
+    color: var(--black);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  color: #5a2a83;
+    margin-bottom: 10px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 10px;
-  max-width: 1200px;
-  margin: auto;
-  padding: 10px;
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.ramo {
-  background-color: #d6b3f5;
-  border: 2px solid #5a2a83;
-  border-radius: 8px;
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
+button {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-.ramo.locked {
-  background-color: #e9d6fb;
-  border-style: dashed;
-  color: #999;
-  cursor: not-allowed;
+button:hover {
+    background-color: var(--dark-purple);
+    transform: translateY(-2px);
 }
 
-.ramo.approved {
-  background-color: #a16dd4;
-  color: #fff;
+.progress-container {
+    flex-grow: 1;
+    margin-left: 20px;
 }
 
-.ramo:hover:not(.locked):not(.approved) {
-  background-color: #b481e5;
+.progress-bar {
+    height: 20px;
+    background-color: var(--gray);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+    transition: width 0.5s ease;
+}
+
+#progress-text {
+    display: block;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--black);
+}
+
+.curriculum-grid {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    gap: 15px;
+}
+
+.semester {
+    min-width: 250px;
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.semester h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--light-purple);
+}
+
+.course {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background-color: var(--light-purple);
+    border-left: 4px solid var(--secondary-color);
+}
+
+.course:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course.completed {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border-left: 4px solid var(--primary-color);
+}
+
+.course.locked {
+    background-color: var(--gray);
+    color: #888;
+    cursor: not-allowed;
+    border-left: 4px solid #ccc;
+}
+
+.course-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.course-requirements {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.prerequisite-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 0.7em;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 2px 5px;
+    border-radius: 10px;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .progress-container {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    
+    .semester {
+        min-width: 220px;
+    }
 }
