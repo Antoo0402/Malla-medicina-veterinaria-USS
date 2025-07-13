@@ -1,16 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malla Medicina Veterinaria USS</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Curricular - Medicina Veterinaria USS</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Malla Interactiva Medicina Veterinaria - USS</h1>
+    <header>
+        <h1>Malla Curricular de Medicina Veterinaria</h1>
+        <p>Universidad San Sebastián - Haz clic en los ramos para marcarlos como aprobados</p>
+    </header>
 
-  <div class="grid" id="malla"></div>
+    <div class="controls">
+        <button id="reset-btn">Reiniciar Todo</button>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+            <span id="progress-text">0% completado</span>
+        </div>
+    </div>
 
-  <script src="script.js"></script>
+    <div class="curriculum-grid">
+        <!-- Los semestres se generarán dinámicamente con JavaScript -->
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
