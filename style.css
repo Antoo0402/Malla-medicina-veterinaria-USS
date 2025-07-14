@@ -1,27 +1,62 @@
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #f0f0f0;
+  font-family: Arial, sans-serif;
+  background: #f5eaff;
+  color: #2c003e;
   margin: 0;
+  padding: 20px;
 }
 
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
-  gap: 4px;
+h1 {
+  text-align: center;
+  color: #6a1b9a;
 }
 
-.grid-item {
-  width: 40px;
-  height: 40px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  transition: background-color 0.3s;
+.malla {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
 }
 
-.grid-item:hover {
-  background-color: #4caf50;
+.semestre {
+  min-width: 200px;
+  background-color: #e1bee7;
+  padding: 10px;
+  border-radius: 10px;
+  flex: 0 0 auto;
+}
+
+.semestre h2 {
+  text-align: center;
+  color: #4a148c;
+}
+
+.curso {
+  background-color: #ce93d8;
+  border: 2px solid #4a148c;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.curso:hover {
+  background-color: #ba68c8;
+}
+
+.curso.aprobado {
+  background-color: #ab47bc;
+  color: white;
+  text-decoration: line-through;
+  cursor: default;
+  border-color: #6a1b9a;
+}
+
+.curso.bloqueado {
+  background-color: #e0e0e0;
+  color: #888;
+  border-color: #ccc;
+  cursor: not-allowed;
 }
