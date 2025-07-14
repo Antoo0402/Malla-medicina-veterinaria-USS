@@ -1,5 +1,5 @@
 const cursosData = [
-  // Formato: {nombre, semestre, requisitos}
+  // SEMESTRE 1
   { nombre: "Biología celular", semestre: 1, requisitos: [] },
   { nombre: "Química General y Orgánico", semestre: 1, requisitos: [] },
   { nombre: "Física Médica", semestre: 1, requisitos: [] },
@@ -7,6 +7,7 @@ const cursosData = [
   { nombre: "Orientación profesional", semestre: 1, requisitos: [] },
   { nombre: "Estrategia para el aprendizaje", semestre: 1, requisitos: [] },
 
+  // SEMESTRE 2
   { nombre: "Bioquímica General", semestre: 2, requisitos: ["Biología celular", "Química General y Orgánico"] },
   { nombre: "Anatomía Veterinaria 1", semestre: 2, requisitos: ["Biología celular"] },
   { nombre: "Histología Veterinaria", semestre: 2, requisitos: ["Biología celular"] },
@@ -14,74 +15,80 @@ const cursosData = [
   { nombre: "Bienestar animal", semestre: 2, requisitos: ["Orientación profesional"] },
   { nombre: "Inglés Instrumental 1", semestre: 2, requisitos: [] },
 
+  // SEMESTRE 3
   { nombre: "Antropología", semestre: 3, requisitos: [] },
   { nombre: "Ecología", semestre: 3, requisitos: ["Zoología Veterinaria"] },
   { nombre: "Fisiología Animal", semestre: 3, requisitos: ["Bioquímica General", "Histología Veterinaria", "Bienestar animal"] },
   { nombre: "Anatomía Veterinaria 2", semestre: 3, requisitos: ["Anatomía Veterinaria 1"] },
   { nombre: "Microbiología General", semestre: 3, requisitos: ["Bioquímica General"] },
-  { nombre: "Inmunología", semestre: 3, requisitos: ["Histología Veterinaria", "Bienestar animal"] },
+  { nombre: "Inmunología", semestre: 3, requisitos: ["Histología Veterinaria"] },
   { nombre: "Genética Ganadera", semestre: 3, requisitos: ["Biología celular", "Matemáticas"] },
   { nombre: "Inglés Instrumental 2", semestre: 3, requisitos: ["Inglés Instrumental 1"] },
 
-  // Puedes continuar añadiendo los cursos del resto de los semestres aquí...
+  // SEMESTRE 4
+  { nombre: "Ética", semestre: 4, requisitos: ["Antropología"] },
+  { nombre: "Producción de forraje", semestre: 4, requisitos: ["Ecología"] },
+  { nombre: "Fisiopatología animal", semestre: 4, requisitos: ["Fisiología Animal", "Inmunología"] },
+  { nombre: "Reproducción animal", semestre: 4, requisitos: ["Fisiología Animal"] },
+  { nombre: "Enfermedades parasitarias", semestre: 4, requisitos: ["Zoología Veterinaria"] },
+  { nombre: "Enfermedades infecciosas", semestre: 4, requisitos: ["Microbiología General", "Inmunología"] },
+  { nombre: "Patología general", semestre: 4, requisitos: ["Fisiología Animal"] },
+
+  // SEMESTRE 5
+  { nombre: "Electivo FILS", semestre: 5, requisitos: ["Ética"] },
+  { nombre: "Nutrición y alimentación animal", semestre: 5, requisitos: ["Producción de forraje"] },
+  { nombre: "Patología especial de sistemas", semestre: 5, requisitos: ["Patología general"] },
+  { nombre: "Farmacología Veterinaria 1", semestre: 5, requisitos: ["Enfermedades infecciosas"] },
+  { nombre: "Andrología", semestre: 5, requisitos: ["Reproducción animal", "Fisiopatología animal"] },
+  { nombre: "Sistema de producción de carne", semestre: 5, requisitos: ["Genética Ganadera", "Reproducción animal"] },
+  { nombre: "Economía", semestre: 5, requisitos: ["Matemáticas", "Producción de forraje"] },
 ];
+// Continúa desde la Parte 1...
 
-const estadoCursos = {}; // Guardar cursos aprobados
-const malla = document.getElementById("malla");
+// SEMESTRE 6
+cursosData.push(
+  { nombre: "Cirugía general", semestre: 6, requisitos: ["Patología especial de sistemas"] },
+  { nombre: "Farmacología Veterinaria 2", semestre: 6, requisitos: ["Farmacología Veterinaria 1", "Enfermedades parasitarias"] },
+  { nombre: "Sistema de producción de leche", semestre: 6, requisitos: ["Nutrición y alimentación animal", "Reproducción animal"] },
+  { nombre: "Tecnología de la carne", semestre: 6, requisitos: ["Sistema de producción de carne"] },
+  { nombre: "Ginecología y obstetricia", semestre: 6, requisitos: ["Andrología"] },
+  { nombre: "Contabilidad y administración", semestre: 6, requisitos: ["Economía"] }
+);
 
-// Agrupar por semestre
-const cursosPorSemestre = {};
-cursosData.forEach(curso => {
-  if (!cursosPorSemestre[curso.semestre]) cursosPorSemestre[curso.semestre] = [];
-  cursosPorSemestre[curso.semestre].push(curso);
-  estadoCursos[curso.nombre] = false;
-});
+// SEMESTRE 7
+cursosData.push(
+  { nombre: "Cirugía especial", semestre: 7, requisitos: ["Cirugía general", "Farmacología Veterinaria 2"] },
+  { nombre: "Exploración clínica", semestre: 7, requisitos: ["Patología especial de sistemas", "Ginecología y obstetricia"] },
+  { nombre: "Análisis estadístico", semestre: 7, requisitos: ["Contabilidad y administración"] },
+  { nombre: "Sistema de peces", semestre: 7, requisitos: ["Reproducción animal", "Nutrición y alimentación animal"] },
+  { nombre: "Tecnología de la leche", semestre: 7, requisitos: ["Tecnología de la carne", "Sistema de producción de leche"] },
+  { nombre: "Conservación de la vida silvestre", semestre: 7, requisitos: ["Ecología"] }
+);
 
-// Mostrar los cursos
-for (let semestre in cursosPorSemestre) {
-  const columna = document.createElement("div");
-  columna.classList.add("semestre");
-  const titulo = document.createElement("h2");
-  titulo.textContent = `Semestre ${semestre}`;
-  columna.appendChild(titulo);
+// SEMESTRE 8
+cursosData.push(
+  { nombre: "Toxicología Veterinaria", semestre: 8, requisitos: ["Farmacología Veterinaria 2"] },
+  { nombre: "Métodos complementarios de diagnóstico", semestre: 8, requisitos: ["Física Médica", "Exploración clínica"] },
+  { nombre: "Medicina Interna", semestre: 8, requisitos: ["Exploración clínica", "Cirugía especial"] },
+  { nombre: "Metodología de la investigación", semestre: 8, requisitos: ["Análisis estadístico"] },
+  { nombre: "Epidemiología y salud pública", semestre: 8, requisitos: ["Farmacología Veterinaria 1", "Análisis estadístico"] },
+  { nombre: "Formulación y evaluación de proyectos", semestre: 8, requisitos: ["Contabilidad y administración"] }
+);
 
-  cursosPorSemestre[semestre].forEach(curso => {
-    const div = document.createElement("div");
-    div.classList.add("curso");
-    div.textContent = curso.nombre;
-    div.dataset.nombre = curso.nombre;
-    div.dataset.requisitos = JSON.stringify(curso.requisitos);
-    if (curso.requisitos.length > 0) div.classList.add("bloqueado");
-    columna.appendChild(div);
-  });
+// SEMESTRE 9
+cursosData.push(
+  { nombre: "Clínica de animales silvestres y exóticos", semestre: 9, requisitos: ["Toxicología Veterinaria", "Medicina Interna", "Conservación de la vida silvestre", "Métodos complementarios de diagnóstico"] },
+  { nombre: "Clínica de equinos y rumiantes", semestre: 9, requisitos: ["Toxicología Veterinaria", "Medicina Interna", "Métodos complementarios de diagnóstico"] },
+  { nombre: "Clínica de animales de compañía", semestre: 9, requisitos: ["Toxicología Veterinaria", "Medicina Interna", "Métodos complementarios de diagnóstico"] },
+  { nombre: "Legislación y deontología", semestre: 9, requisitos: ["Epidemiología y salud pública"] },
+  { nombre: "Memoria de título", semestre: 9, requisitos: [ /* todos los anteriores */ ] },  // bloqueada manualmente
+  { nombre: "Introducción de los animales", semestre: 9, requisitos: [] }
+);
 
-  malla.appendChild(columna);
-}
-
-// Función para actualizar estado
-function actualizarEstado() {
-  document.querySelectorAll(".curso").forEach(div => {
-    const nombre = div.dataset.nombre;
-    const requisitos = JSON.parse(div.dataset.requisitos);
-
-    if (estadoCursos[nombre]) {
-      div.classList.add("aprobado");
-      div.classList.remove("bloqueado");
-      div.removeEventListener("click", manejarClick);
-    } else {
-      const desbloqueado = requisitos.every(req => estadoCursos[req]);
-      div.classList.toggle("bloqueado", !desbloqueado);
-      if (desbloqueado) div.addEventListener("click", manejarClick);
-      else div.removeEventListener("click", manejarClick);
-    }
-  });
-}
-
-// Click para aprobar ramo
-function manejarClick(e) {
-  const nombre = e.currentTarget.dataset.nombre;
-  estadoCursos[nombre] = true;
-  actualizarEstado();
-}
-
-actualizarEstado();
+// SEMESTRE 10
+cursosData.push(
+  { nombre: "Electivo 1", semestre: 10, requisitos: ["Clínica de animales silvestres y exóticos", "Clínica de equinos y rumiantes", "Clínica de animales de compañía", "Legislación y deontología"] },
+  { nombre: "Electivo 2", semestre: 10, requisitos: ["Clínica de animales silvestres y exóticos", "Clínica de equinos y rumiantes", "Clínica de animales de compañía", "Legislación y deontología"] },
+  { nombre: "Electivo 3", semestre: 10, requisitos: ["Clínica de animales silvestres y exóticos", "Clínica de equinos y rumiantes", "Clínica de animales de compañía", "Legislación y deontología"] },
+  { nombre: "Internado", semestre: 10, requisitos: ["Clínica de animales silvestres y exóticos", "Clínica de equinos y rumiantes", "Clínica de animales de compañía", "Legislación y deontología"] }
+);
