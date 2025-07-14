@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Datos de la malla curricular
+    // Datos completos de la malla curricular
     const curriculumData = [
+        // Primer semestre
         {
             semester: "1er Semestre",
             courses: [
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Estrategia para el aprendizaje", opens: [] }
             ]
         },
+        // Segundo semestre
         {
             semester: "2do Semestre",
             courses: [
@@ -23,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Inglés Instrumental 1", opens: ["Inglés Instrumental 2"] }
             ]
         },
+        // Tercer semestre
         {
             semester: "3er Semestre",
             courses: [
@@ -36,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Inglés Instrumental 2", opens: [] }
             ]
         },
+        // Cuarto semestre
         {
             semester: "4to Semestre",
             courses: [
@@ -48,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Patología general", opens: ["Patología especial de sistemas"] }
             ]
         },
+        // Quinto semestre
         {
             semester: "5to Semestre",
             courses: [
@@ -60,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Economía", opens: ["Contabilidad y administración"] }
             ]
         },
+        // Sexto semestre
         {
             semester: "6to Semestre",
             courses: [
@@ -71,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Contabilidad y administración", opens: ["Análisis estadísticos", "Formulación y evaluación de proyectos"] }
             ]
         },
+        // Séptimo semestre
         {
             semester: "7mo Semestre",
             courses: [
@@ -82,6 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Conservación de la vida silvestre", opens: ["Clínica de animales silvestres y exóticos"] }
             ]
         },
+        // Octavo semestre
         {
             semester: "8vo Semestre",
             courses: [
@@ -93,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Formulación y evaluación de proyectos", opens: ["Memoria de título"] }
             ]
         },
+        // Noveno semestre
         {
             semester: "9no Semestre",
             courses: [
@@ -100,10 +109,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 { name: "Clínica de equinos y rumiantes", opens: ["Electivo 1", "Electivo 2", "Electivo 3", "Internado"] },
                 { name: "Clínica de animales de compañía", opens: ["Electivo 1", "Electivo 2", "Electivo 3", "Internado"] },
                 { name: "Legislación y deontología", opens: ["Electivo 1", "Electivo 2", "Electivo 3", "Internado"] },
-                { name: "Memoria de título", opens: [], requiresAll: true },
+                { name: "Memoria de título", opens: [], requiresAll: true, requiresUpTo: 8 },
                 { name: "Inocuidad de los alimentos", opens: ["Electivo 1", "Electivo 2", "Electivo 3", "Internado"] }
             ]
         },
+        // Décimo semestre
         {
             semester: "10mo Semestre",
             courses: [
@@ -115,19 +125,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     ];
 
-    // Estado de los cursos
-    let completedCourses = JSON.parse(localStorage.getItem('completedCourses')) || {};
-    let totalCourses = 0;
-    
-    // Contar el total de cursos
-    curriculumData.forEach(semester => {
-        totalCourses += semester.courses.length;
-    });
+    // Estado de la aplicación
+    const state = {
+        completedCourses: JSON.parse(localStorage.getItem('completedCourses')) || {},
+        totalCourses: curriculumData.reduce((total, semester) => total + semester.courses.length, 0),
+        courseElements: {}
+    };
 
-    // Renderizar la malla curricular
-    const curriculumGrid = document.querySelector('.curriculum-grid');
-    
-    curriculumData.forEach(semester => {
+    // Elementos del DOM
+    const DOM = {
+        curriculumGrid: document.querySelector('.curriculum-grid'),
+        resetBtn: document.getElementById('reset-btn'),
+        progressBar: document.querySelector('.progress-bar'),
+        progressText: document.getElementById('progress-text')
+    };
+
+    // Inicializar la aplicación
+    function init() {
+        renderCurriculum();
+        setupEventListeners();
+        updateProgress();
+    }
+
+    // Renderizar toda la malla curricular
+    function renderCurriculum() {
+        DOM.curriculumGrid.innerHTML = '';
+        state.courseElements = {};
+
+        curriculumData.forEach(semester => {
+            const semesterElement = createSemesterElement(semester);
+            DOM.curriculumGrid.appendChild(semesterElement);
+        });
+    }
+
+    // Crear elemento de semestre
+    function createSemesterElement(semester) {
         const semesterElement = document.createElement('div');
         semesterElement.className = 'semester';
         
@@ -136,97 +168,142 @@ document.addEventListener('DOMContentLoaded', function() {
         semesterElement.appendChild(semesterTitle);
         
         semester.courses.forEach(course => {
-            const courseElement = document.createElement('div');
-            courseElement.className = 'course';
-            courseElement.dataset.courseName = course.name;
-            
-            // Verificar si el curso está completado
-            if (completedCourses[course.name]) {
-                courseElement.classList.add('completed');
-            }
-            
-            // Verificar requisitos para el curso
-            const prerequisites = getPrerequisites(course.name);
-            if (prerequisites.length > 0 && !completedCourses[course.name]) {
-                const allPrerequisitesMet = prerequisites.every(prereq => completedCourses[prereq]);
-                
-                if (!allPrerequisitesMet) {
-                    courseElement.classList.add('locked');
-                    const prereqIcon = document.createElement('span');
-                    prereqIcon.className = 'prerequisite-icon';
-                    prereqIcon.textContent = `${prerequisites.filter(prereq => !completedCourses[prereq]).length}/${prerequisites.length}`;
-                    courseElement.appendChild(prereqIcon);
-                }
-            }
-            
-            // Para "Memoria de título" que requiere aprobar todo hasta 8vo semestre
-            if (course.name === "Memoria de título" && course.requiresAll) {
-                const allPreviousCompleted = checkAllPreviousSemestersCompleted(8);
-                if (!allPreviousCompleted && !completedCourses[course.name]) {
-                    courseElement.classList.add('locked');
-                    const prereqIcon = document.createElement('span');
-                    prereqIcon.className = 'prerequisite-icon';
-                    prereqIcon.textContent = "Todos";
-                    courseElement.appendChild(prereqIcon);
-                }
-            }
-            
-            const courseNameElement = document.createElement('div');
-            courseNameElement.className = 'course-name';
-            courseNameElement.textContent = course.name;
-            courseElement.appendChild(courseNameElement);
-            
-            if (course.opens && course.opens.length > 0) {
-                const courseRequirementsElement = document.createElement('div');
-                courseRequirementsElement.className = 'course-requirements';
-                courseRequirementsElement.textContent = `Abre: ${course.opens.join(', ')}`;
-                courseElement.appendChild(courseRequirementsElement);
-            }
-            
-            // Evento de clic
-            courseElement.addEventListener('click', function() {
-                if (this.classList.contains('locked')) return;
-                
-                this.classList.toggle('completed');
-                const courseName = this.dataset.courseName;
-                
-                if (this.classList.contains('completed')) {
-                    completedCourses[courseName] = true;
-                } else {
-                    delete completedCourses[courseName];
-                }
-                
-                // Guardar en localStorage
-                localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
-                
-                // Actualizar progreso
-                updateProgress();
-                
-                // Volver a renderizar para actualizar los cursos bloqueados/desbloqueados
-                renderCurriculum();
-            });
-            
+            const courseElement = createCourseElement(course);
             semesterElement.appendChild(courseElement);
+            state.courseElements[course.name] = courseElement;
         });
         
-        curriculumGrid.appendChild(semesterElement);
-    });
+        return semesterElement;
+    }
 
-    // Botón de reinicio
-    document.getElementById('reset-btn').addEventListener('click', function() {
-        completedCourses = {};
-        localStorage.removeItem('completedCourses');
-        renderCurriculum();
-        updateProgress();
-    });
-
-    // Actualizar barra de progreso
-    function updateProgress() {
-        const completedCount = Object.keys(completedCourses).length;
-        const progressPercentage = Math.round((completedCount / totalCourses) * 100);
+    // Crear elemento de curso
+    function createCourseElement(course) {
+        const courseElement = document.createElement('div');
+        courseElement.className = 'course';
+        courseElement.dataset.courseName = course.name;
         
-        document.querySelector('.progress-bar').style.setProperty('--progress', `${progressPercentage}%`);
-        document.getElementById('progress-text').textContent = `${progressPercentage}% completado (${completedCount}/${totalCourses} ramos)`;
+        // Configurar estado del curso
+        updateCourseState(course, courseElement);
+        
+        // Contenido del curso
+        const courseNameElement = document.createElement('div');
+        courseNameElement.className = 'course-name';
+        courseNameElement.textContent = course.name;
+        courseElement.appendChild(courseNameElement);
+        
+        // Requisitos que abre
+        if (course.opens && course.opens.length > 0) {
+            const courseRequirementsElement = document.createElement('div');
+            courseRequirementsElement.className = 'course-requirements';
+            courseRequirementsElement.textContent = `Abre: ${course.opens.join(', ')}`;
+            courseElement.appendChild(courseRequirementsElement);
+        }
+        
+        // Tooltip para requisitos faltantes
+        if (!state.completedCourses[course.name]) {
+            const prerequisites = getPrerequisites(course.name);
+            const missingPrerequisites = prerequisites.filter(p => !state.completedCourses[p]);
+            
+            if (missingPrerequisites.length > 0) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = `Requisitos: ${missingPrerequisites.join(', ')}`;
+                courseElement.appendChild(tooltip);
+            }
+        }
+        
+        // Evento de clic
+        courseElement.addEventListener('click', () => handleCourseClick(course, courseElement));
+        
+        return courseElement;
+    }
+
+    // Actualizar estado visual del curso
+    function updateCourseState(course, courseElement) {
+        const isCompleted = state.completedCourses[course.name];
+        
+        // Reiniciar clases
+        courseElement.className = 'course';
+        courseElement.classList.remove('completed', 'available', 'locked');
+        
+        if (isCompleted) {
+            courseElement.classList.add('completed');
+            return;
+        }
+        
+        // Verificar requisitos
+        const prerequisites = getPrerequisites(course.name);
+        const allPrerequisitesMet = prerequisites.every(p => state.completedCourses[p]);
+        
+        // Verificar requisito especial de "Memoria de título"
+        if (course.requiresAll && course.requiresUpTo) {
+            const allPreviousCompleted = checkAllPreviousSemestersCompleted(course.requiresUpTo);
+            if (!allPreviousCompleted) {
+                courseElement.classList.add('locked');
+                addPrerequisiteIcon(courseElement, "Todos los anteriores");
+                return;
+            }
+        }
+        
+        if (prerequisites.length > 0 && !allPrerequisitesMet) {
+            courseElement.classList.add('locked');
+            addPrerequisiteIcon(courseElement, `${prerequisites.filter(p => !state.completedCourses[p]).length}/${prerequisites.length}`);
+            return;
+        }
+        
+        // Si no está completado y no tiene requisitos incumplidos, está disponible
+        courseElement.classList.add('available');
+    }
+
+    // Añadir icono de requisitos faltantes
+    function addPrerequisiteIcon(element, text) {
+        // Eliminar icono existente si lo hay
+        const existingIcon = element.querySelector('.prerequisite-icon');
+        if (existingIcon) element.removeChild(existingIcon);
+        
+        const icon = document.createElement('span');
+        icon.className = 'prerequisite-icon';
+        if (element.classList.contains('locked')) icon.classList.add('locked');
+        icon.textContent = text;
+        element.appendChild(icon);
+    }
+
+    // Manejar clic en un curso
+    function handleCourseClick(course, courseElement) {
+        if (courseElement.classList.contains('locked')) return;
+        
+        // Alternar estado de completado
+        const courseName = course.name;
+        if (state.completedCourses[courseName]) {
+            delete state.completedCourses[courseName];
+            courseElement.classList.remove('completed');
+            courseElement.classList.add('available');
+        } else {
+            state.completedCourses[courseName] = true;
+            courseElement.classList.remove('available');
+            courseElement.classList.add('completed');
+            
+            // Efecto visual al completar
+            courseElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                courseElement.style.transform = 'scale(1)';
+            }, 200);
+        }
+        
+        // Guardar estado y actualizar
+        localStorage.setItem('completedCourses', JSON.stringify(state.completedCourses));
+        updateAllCoursesState();
+        updateProgress();
+    }
+
+    // Actualizar estado de todos los cursos
+    function updateAllCoursesState() {
+        curriculumData.forEach(semester => {
+            semester.courses.forEach(course => {
+                const courseElement = state.courseElements[course.name];
+                if (courseElement) updateCourseState(course, courseElement);
+            });
+        });
     }
 
     // Obtener requisitos para un curso
@@ -246,119 +323,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Verificar si todos los cursos hasta cierto semestre están completados
     function checkAllPreviousSemestersCompleted(upToSemester) {
-        let allCompleted = true;
-        
         for (let i = 0; i < upToSemester; i++) {
             const semester = curriculumData[i];
             
             for (const course of semester.courses) {
-                if (!completedCourses[course.name]) {
-                    allCompleted = false;
-                    break;
+                if (!state.completedCourses[course.name]) {
+                    return false;
                 }
             }
-            
-            if (!allCompleted) break;
         }
         
-        return allCompleted;
+        return true;
     }
 
-    // Volver a renderizar toda la malla
-    function renderCurriculum() {
-        while (curriculumGrid.firstChild) {
-            curriculumGrid.removeChild(curriculumGrid.firstChild);
-        }
+    // Actualizar barra de progreso
+    function updateProgress() {
+        const completedCount = Object.keys(state.completedCourses).length;
+        const progressPercentage = Math.round((completedCount / state.totalCourses) * 100);
         
-        curriculumData.forEach(semester => {
-            const semesterElement = document.createElement('div');
-            semesterElement.className = 'semester';
-            
-            const semesterTitle = document.createElement('h2');
-            semesterTitle.textContent = semester.semester;
-            semesterElement.appendChild(semesterTitle);
-            
-            semester.courses.forEach(course => {
-                const courseElement = document.createElement('div');
-                courseElement.className = 'course';
-                courseElement.dataset.courseName = course.name;
-                
-                if (completedCourses[course.name]) {
-                    courseElement.classList.add('completed');
-                }
-                
-                const prerequisites = getPrerequisites(course.name);
-                if (prerequisites.length > 0 && !completedCourses[course.name]) {
-                    const allPrerequisitesMet = prerequisites.every(prereq => completedCourses[prereq]);
-                    
-                    if (!allPrerequisitesMet) {
-                        courseElement.classList.add('locked');
-                        const prereqIcon = document.createElement('span');
-                        prereqIcon.className = 'prerequisite-icon';
-                        prereqIcon.textContent = `${prerequisites.filter(prereq => !completedCourses[prereq]).length}/${prerequisites.length}`;
-                        courseElement.appendChild(prereqIcon);
-                    }
-                }
-                
-                // Para "Memoria de título"
-                if (course.name === "Memoria de título" && course.requiresAll) {
-                    const allPreviousCompleted = checkAllPreviousSemestersCompleted(8);
-                    if (!allPreviousCompleted && !completedCourses[course.name]) {
-                        courseElement.classList.add('locked');
-                        const prereqIcon = document.createElement('span');
-                        prereqIcon.className = 'prerequisite-icon';
-                        prereqIcon.textContent = "Todos";
-                        courseElement.appendChild(prereqIcon);
-                    }
-                }
-                
-                const courseNameElement = document.createElement('div');
-                courseNameElement.className = 'course-name';
-                courseNameElement.textContent = course.name;
-                courseElement.appendChild(courseNameElement);
-                
-                if (course.opens && course.opens.length > 0) {
-                    const courseRequirementsElement = document.createElement('div');
-                    courseRequirementsElement.className = 'course-requirements';
-                    courseRequirementsElement.textContent = `Abre: ${course.opens.join(', ')}`;
-                    courseElement.appendChild(courseRequirementsElement);
-                }
-                
-                courseElement.addEventListener('click', function() {
-                    if (this.classList.contains('locked')) return;
-                    
-                    this.classList.toggle('completed');
-                    const courseName = this.dataset.courseName;
-                    
-                    if (this.classList.contains('completed')) {
-                        completedCourses[courseName] = true;
-                    } else {
-                        delete completedCourses[courseName];
-                    }
-                    
-                    localStorage.setItem('completedCourses', JSON.stringify(completedCourses));
-                    updateProgress();
-                    renderCurriculum();
-                });
-                
-                semesterElement.appendChild(courseElement);
-            });
-            
-            curriculumGrid.appendChild(semesterElement);
+        DOM.progressBar.style.setProperty('--progress', `${progressPercentage}%`);
+        DOM.progressText.textContent = `${progressPercentage}% completado (${completedCount}/${state.totalCourses} ramos)`;
+    }
+
+    // Configurar event listeners
+    function setupEventListeners() {
+        DOM.resetBtn.addEventListener('click', () => {
+            state.completedCourses = {};
+            localStorage.removeItem('completedCourses');
+            updateAllCoursesState();
+            updateProgress();
         });
     }
 
-    // Inicializar progreso
-    updateProgress();
-});
-
-// Función para agregar estilos dinámicos a la barra de progreso
-document.addEventListener('DOMContentLoaded', function() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .progress-bar::after {
-            width: var(--progress, 0%);
-        }
-    `;
-    document.head.appendChild(style);
+    // Iniciar la aplicación
+    init();
 });
