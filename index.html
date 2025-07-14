@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malla Veterinaria USS - Interactiva</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos iniciales para evitar FOUC */
+        body {
+            visibility: hidden;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>🐾 Malla Curricular de Medicina Veterinaria</h1>
+        <h1> Malla Curricular de Medicina Veterinaria</h1>
         <p>Universidad San Sebastián - Haz clic para marcar ramos como aprobados</p>
     </header>
 
@@ -31,5 +37,11 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // Mostrar contenido cuando todo esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.visibility = 'visible';
+        });
+    </script>
 </body>
 </html>
